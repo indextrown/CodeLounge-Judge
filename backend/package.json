@@ -7,7 +7,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "check": "node --check src/app.js && node --check src/server.js && node --check src/problemStore.js && node --check src/processRunner.js && node --check src/judge.js",
+    "check": "node --check src/app.js && node --check src/server.js && node --check src/problemStore.js && node --check src/processRunner.js && node --check src/judge.js && node --check src/userStore.js",
     "test": "npm run check && node --test test/*.test.js"
   },
   "engines": {

@@ -3,7 +3,7 @@
 }
 
 .v3-topbar {
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
 }
 
 .v3-hero {
@@ -69,6 +69,40 @@
   border-radius: 20px;
   overflow: hidden;
   background: #fbfdff;
+}
+
+.v3-guest-gate {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px dashed #c7d8ea;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(0, 118, 200, 0.06), rgba(255, 255, 255, 0.92));
+  margin-bottom: 10px;
+}
+
+.v3-guest-gate strong {
+  font-size: 1rem;
+}
+
+.v3-guest-gate p,
+.v3-save-hint {
+  margin: 0;
+  color: #607284;
+  line-height: 1.6;
+}
+
+.v3-save-hint {
+  margin-top: 10px;
+  font-size: 0.88rem;
+}
+
+.v3-save-hint[data-tone="error"] {
+  color: #c23c3c;
+}
+
+.v3-save-hint[data-tone="saved"] {
+  color: #0f8b5f;
 }
 
 .v3-code-editor.is-dark {

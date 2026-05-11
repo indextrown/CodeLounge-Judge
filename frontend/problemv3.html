@@ -27,6 +27,7 @@
           <a href="./problemv2.html?id=1001">V2 보기</a>
           <a class="is-active" href="#">상세 V3</a>
         </nav>
+        <div id="topbarAuth" class="topbar-auth"></div>
       </header>
 
       <main class="v2-main">
@@ -99,24 +100,34 @@
                     <option value="cpp">C++</option>
                     <option value="swift" selected>Swift</option>
                   </select>
+                  <button id="resetButton" class="secondary-button" type="button">초기화</button>
                   <button id="runButton" class="v2-primary-button">채점하기</button>
                 </div>
               </div>
 
-              <div class="v3-toolbar">
-                <div class="v3-toggle-group" role="group" aria-label="highlight toggle">
-                  <button id="plainModeButton" class="v3-toggle-button" type="button">Plain</button>
-                  <button id="highlightModeButton" class="v3-toggle-button is-active" type="button">Highlight</button>
-                </div>
-                <div class="v3-toggle-group" role="group" aria-label="theme toggle">
-                  <button id="lightThemeButton" class="v3-toggle-button is-active" type="button">Light</button>
-                  <button id="darkThemeButton" class="v3-toggle-button" type="button">Dark</button>
-                </div>
-              </div>
+              <section id="guestGate" class="v3-guest-gate hidden">
+                <strong>회원 전용 에디터</strong>
+                <p>로그인한 회원만 저장된 풀이 코드를 불러오고, 채점을 바로 실행할 수 있습니다.</p>
+                <a class="secondary-button" href="./index.html">메인에서 로그인하기</a>
+              </section>
 
-              <div class="v3-editor-frame">
-                <div id="codeEditor" class="v3-code-editor"></div>
-              </div>
+              <section id="memberEditorSection">
+                <div class="v3-toolbar">
+                  <div class="v3-toggle-group" role="group" aria-label="highlight toggle">
+                    <button id="plainModeButton" class="v3-toggle-button" type="button">Plain</button>
+                    <button id="highlightModeButton" class="v3-toggle-button is-active" type="button">Highlight</button>
+                  </div>
+                  <div class="v3-toggle-group" role="group" aria-label="theme toggle">
+                    <button id="lightThemeButton" class="v3-toggle-button is-active" type="button">Light</button>
+                    <button id="darkThemeButton" class="v3-toggle-button" type="button">Dark</button>
+                  </div>
+                </div>
+
+                <div class="v3-editor-frame">
+                  <div id="codeEditor" class="v3-code-editor"></div>
+                </div>
+                <p id="saveHint" class="v3-save-hint">저장 상태를 확인하는 중입니다.</p>
+              </section>
             </article>
 
             <article class="v2-panel v2-result-panel">

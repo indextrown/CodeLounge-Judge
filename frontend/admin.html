@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>관리자 페이지 - 코드라운지</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">C</span>
+          <span class="brand-text">
+            <strong>코드라운지</strong>
+            <small>Admin Console</small>
+          </span>
+        </a>
+        <div id="adminTopbarAuth" class="topbar-auth"></div>
+      </header>
+
+      <main class="view">
+        <section class="hero-card">
+          <div>
+            <p class="section-kicker">관리자 페이지</p>
+            <h1>회원 목록과 권한을 관리하는 콘솔</h1>
+            <p class="hero-copy">관리자는 가입된 회원을 확인하고, 권한을 `admin` 또는 `user`로 변경하거나 계정을 삭제할 수 있습니다.</p>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-card">
+              <span>Users</span>
+              <strong id="userCount">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>Roles</span>
+              <strong>admin / user</strong>
+            </div>
+          </div>
+        </section>
+
+        <section id="adminMessagePanel" class="table-panel auth-message-panel hidden">
+          <div class="table-header">
+            <h2>알림</h2>
+            <p id="adminMessageText"></p>
+          </div>
+        </section>
+
+        <section class="table-panel">
+          <div class="table-header admin-toolbar">
+            <div>
+              <h2>회원 목록</h2>
+              <p>권한 변경은 즉시 저장되고, 관리자 본인 삭제는 막아둡니다.</p>
+            </div>
+            <input id="userSearchInput" class="search-input" placeholder="아이디 검색">
+          </div>
+          <div class="table-wrap">
+            <table class="problem-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>아이디</th>
+                  <th>역할</th>
+                  <th>가입일</th>
+                  <th>관리</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./shared.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+  </html>

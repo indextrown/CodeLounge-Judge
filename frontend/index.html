@@ -19,6 +19,7 @@
             <small>Swift + C++ Online Judge</small>
           </span>
         </a>
+        <div id="topbarAuth" class="topbar-auth"></div>
       </header>
 
       <main class="view">
@@ -26,7 +27,7 @@
           <div>
             <p class="section-kicker">문제 목록</p>
             <h1>백준처럼 문제를 고르고 바로 풀어보는 연습장</h1>
-            <p class="hero-copy">문제 번호와 제목을 눌러 상세 페이지로 이동한 뒤, C++ 또는 Swift로 바로 제출할 수 있습니다.</p>
+            <p class="hero-copy">회원은 문제별로 내 코드를 저장하고 이어서 풀 수 있고, 비회원은 문제 목록만 둘러볼 수 있습니다.</p>
           </div>
           <div class="hero-stats">
             <div class="stat-card">
@@ -40,10 +41,17 @@
           </div>
         </div>
 
+        <section id="authMessagePanel" class="table-panel auth-message-panel hidden">
+          <div class="table-header">
+            <h2>회원 상태</h2>
+            <p id="authMessageText">로그인 상태를 확인하는 중입니다.</p>
+          </div>
+        </section>
+
         <section class="table-panel">
           <div class="table-header">
             <h2>전체 문제</h2>
-            <p>문제 셀을 클릭하면 상세 풀이 화면으로 이동합니다.</p>
+            <p>회원은 상세 풀이 화면에서 저장된 코드와 함께 이어서 풀이할 수 있습니다.</p>
           </div>
           <div class="table-wrap">
             <table class="problem-table">
@@ -61,6 +69,48 @@
           </div>
         </section>
       </main>
+    </div>
+
+    <div id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <div class="auth-modal-backdrop" data-close-auth-modal="true"></div>
+      <div class="auth-modal-card">
+        <div class="auth-modal-head">
+          <div>
+            <p class="section-kicker">계정</p>
+            <h2 id="authModalTitle">로그인</h2>
+          </div>
+          <button id="closeAuthModalButton" class="secondary-button" type="button">닫기</button>
+        </div>
+        <div class="auth-modal-tabs" role="tablist" aria-label="auth tabs">
+          <button id="showLoginTabButton" class="auth-tab-button is-active" type="button">로그인</button>
+          <button id="showSignupTabButton" class="auth-tab-button" type="button">회원가입</button>
+        </div>
+        <div id="authModalPanels">
+          <form id="loginForm" class="auth-form auth-modal-form">
+            <label>
+              <span>아이디</span>
+              <input id="loginUsername" name="username" autocomplete="username" placeholder="3~24자, 영문/숫자/_">
+            </label>
+            <label>
+              <span>비밀번호</span>
+              <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="비밀번호 입력">
+            </label>
+            <button class="primary-button" type="submit">로그인</button>
+          </form>
+
+          <form id="signupForm" class="auth-form auth-modal-form hidden">
+            <label>
+              <span>아이디</span>
+              <input id="signupUsername" name="username" autocomplete="username" placeholder="3~24자, 영문/숫자/_">
+            </label>
+            <label>
+              <span>비밀번호</span>
+              <input id="signupPassword" name="password" type="password" autocomplete="new-password" placeholder="6자 이상">
+            </label>
+            <button class="primary-button" type="submit">회원가입</button>
+          </form>
+        </div>
+      </div>
     </div>
 
     <script src="./shared.js"></script>

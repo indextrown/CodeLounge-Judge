@@ -1,21 +1,25 @@
-import {EditorState, Compartment, Prec} from "https://esm.sh/@codemirror/state";
-import {EditorView, keymap} from "https://esm.sh/@codemirror/view";
-import {basicSetup} from "https://esm.sh/codemirror";
-import {cpp} from "https://esm.sh/@codemirror/lang-cpp";
-import {StreamLanguage, HighlightStyle, syntaxHighlighting} from "https://esm.sh/@codemirror/language";
-import {swift} from "https://esm.sh/@codemirror/legacy-modes/mode/swift";
-import {tags} from "https://esm.sh/@lezer/highlight";
+import { EditorState, Compartment, Prec } from "https://esm.sh/@codemirror/state";
+import { EditorView, keymap } from "https://esm.sh/@codemirror/view";
+import { basicSetup } from "https://esm.sh/codemirror";
+import { cpp } from "https://esm.sh/@codemirror/lang-cpp";
+import { StreamLanguage, HighlightStyle, syntaxHighlighting } from "https://esm.sh/@codemirror/language";
+import { swift } from "https://esm.sh/@codemirror/legacy-modes/mode/swift";
+import { tags } from "https://esm.sh/@lezer/highlight";
 
 const state = {
   apiBaseUrl: window.getStoredApiBaseUrl(),
   currentProblem: null,
+  currentUser: window.getStoredAuthUser(),
   activeLanguage: 'swift',
   editor: null,
   highlightEnabled: true,
   darkThemeEnabled: false,
+  saveStatus: 'idle',
+  hydratingEditor: false,
 };
 
 const elements = {
+  topbarAuth: document.querySelector('#topbarAuth'),
   breadcrumbLabel: document.querySelector('#breadcrumbLabel'),
   languageSelect: document.querySelector('#languageSelect'),
   problemTitle: document.querySelector('#problemTitle'),
@@ -30,6 +34,7 @@ const elements = {
   caseCount: document.querySelector('#caseCount'),
   casesList: document.querySelector('#casesList'),
   runButton: document.querySelector('#runButton'),
+  resetButton: document.querySelector('#resetButton'),
   statusBadge: document.querySelector('#statusBadge'),
   summary: document.querySelector('#summary'),
   compileLog: document.querySelector('#compileLog'),
@@ -39,6 +44,9 @@ const elements = {
   highlightModeButton: document.querySelector('#highlightModeButton'),
   lightThemeButton: document.querySelector('#lightThemeButton'),
   darkThemeButton: document.querySelector('#darkThemeButton'),
+  guestGate: document.querySelector('#guestGate'),
+  memberEditorSection: document.querySelector('#memberEditorSection'),
+  saveHint: document.querySelector('#saveHint'),
 };
 
 const languageCompartment = new Compartment();
@@ -78,22 +86,28 @@ const xcodeDarkTheme = EditorView.theme({
     border: "1px solid #344356",
     color: "#9db0c5",
   },
-}, {dark: true});
+}, { dark: true });
 
 const xcodeDarkHighlightStyle = HighlightStyle.define([
-  {tag: tags.keyword, color: "#ff7ab2"},
-  {tag: [tags.definitionKeyword, tags.modifier, tags.controlKeyword], color: "#ff7ab2"},
-  {tag: [tags.typeName, tags.className, tags.namespace], color: "#5dd8ff"},
-  {tag: [tags.number, tags.integer, tags.float, tags.bool, tags.null], color: "#d0a8ff"},
-  {tag: [tags.string, tags.special(tags.string)], color: "#ff9f43"},
-  {tag: [tags.comment, tags.lineComment, tags.blockComment], color: "#6c7986", fontStyle: "italic"},
-  {tag: [tags.function(tags.variableName), tags.function(tags.propertyName)], color: "#d9e3f0"},
-  {tag: [tags.variableName, tags.propertyName], color: "#d9e3f0"},
-  {tag: tags.special(tags.variableName), color: "#ffcc66"},
-  {tag: [tags.operator, tags.punctuation, tags.separator], color: "#c8d3df"},
-  {tag: [tags.bracket, tags.paren, tags.squareBracket, tags.brace], color: "#c8d3df"},
-  {tag: [tags.attributeName, tags.labelName], color: "#ffd866"},
+  { tag: tags.keyword, color: "#ff7ab2" },
+  { tag: [tags.definitionKeyword, tags.modifier, tags.controlKeyword], color: "#ff7ab2" },
+  { tag: [tags.typeName, tags.className, tags.namespace], color: "#5dd8ff" },
+  { tag: [tags.number, tags.integer, tags.float, tags.bool, tags.null], color: "#d0a8ff" },
+  { tag: [tags.string, tags.special(tags.string)], color: "#ff9f43" },
+  { tag: [tags.comment, tags.lineComment, tags.blockComment], color: "#6c7986", fontStyle: "italic" },
+  { tag: [tags.function(tags.variableName), tags.function(tags.propertyName)], color: "#d9e3f0" },
+  { tag: [tags.variableName, tags.propertyName], color: "#d9e3f0" },
+  { tag: tags.special(tags.variableName), color: "#ffcc66" },
+  { tag: [tags.operator, tags.punctuation, tags.separator], color: "#c8d3df" },
+  { tag: [tags.bracket, tags.paren, tags.squareBracket, tags.brace], color: "#c8d3df" },
+  { tag: [tags.attributeName, tags.labelName], color: "#ffd866" },
 ]);
+
+const debouncedSaveCurrentSource = window.debounce(() => {
+  saveCurrentSource().catch((error) => {
+    setSaveHint(error.message, 'error');
+  });
+}, 700);
 
 function getProblemIdFromUrl() {
   const problemId = Number(new URL(window.location.href).searchParams.get('id'));
@@ -105,17 +119,44 @@ function setStatus(label, className) {
   elements.statusBadge.className = `status-badge ${className}`;
 }
 
+function setSaveHint(message, tone = 'idle') {
+  elements.saveHint.textContent = message;
+  elements.saveHint.dataset.tone = tone;
+}
+
+function renderTopbarAuth() {
+  if (!state.currentUser) {
+    elements.topbarAuth.innerHTML = `
+      <div class="user-chip muted">
+        <span>비회원 모드</span>
+        <small>에디터는 로그인 후 열립니다</small>
+      </div>
+    `;
+    return;
+  }
+
+  elements.topbarAuth.innerHTML = `
+    <div class="topbar-auth-row">
+      <div class="user-chip">
+        <strong>${window.escapeHtml(state.currentUser.username)}</strong>
+        <small>${window.escapeHtml(state.currentUser.role)}</small>
+      </div>
+      ${state.currentUser.role === 'admin' ? '<a class="secondary-button" href="./admin.html">관리자 페이지</a>' : ''}
+      <button id="logoutButton" class="secondary-button" type="button">로그아웃</button>
+    </div>
+  `;
+
+  document.querySelector('#logoutButton')?.addEventListener('click', async () => {
+    await window.logout(state.apiBaseUrl);
+    state.currentUser = null;
+    renderTopbarAuth();
+    applyEditorAccess();
+    clearJudgeResult('로그아웃되었습니다. 다시 로그인하면 저장된 코드를 불러올 수 있습니다.');
+  });
+}
+
 function getEditorValue() {
   return state.editor ? state.editor.state.doc.toString() : '';
-}
-
-function preserveCurrentSource() {
-  if (!state.currentProblem) return;
-  window.setStoredSource(state.currentProblem.id, state.activeLanguage, getEditorValue());
-}
-
-function resolveSource(problem, language) {
-  return window.getStoredSource(problem.id, language) || problem.starterCodes[language] || '';
 }
 
 function clearJudgeResult(message = '채점 대기 중입니다.') {
@@ -127,6 +168,10 @@ function clearJudgeResult(message = '채점 대기 중입니다.') {
 }
 
 function triggerJudge() {
+  if (!state.currentUser) {
+    clearJudgeResult('로그인한 회원만 채점할 수 있습니다. 메인 화면에서 로그인해 주세요.');
+    return;
+  }
   submitJudge().catch((error) => clearJudgeResult(error.message));
 }
 
@@ -185,6 +230,23 @@ function configureEditor() {
   syncToggleButtons();
 }
 
+async function saveCurrentSource() {
+  if (!state.currentUser || !state.currentProblem || !state.editor || state.hydratingEditor) {
+    return;
+  }
+
+  setSaveHint('저장 중...', 'saving');
+  const response = await window.fetchJson(
+    state.apiBaseUrl,
+    `/problems/${state.currentProblem.id}/code?language=${state.activeLanguage}`,
+    {
+      method: 'PUT',
+      body: { sourceCode: getEditorValue() },
+    }
+  );
+  setSaveHint(`저장됨 · ${new Date(response.updatedAt).toLocaleTimeString('ko-KR')}`, 'saved');
+}
+
 function createEditor(initialDoc) {
   const editorState = EditorState.create({
     doc: initialDoc,
@@ -205,8 +267,9 @@ function createEditor(initialDoc) {
         },
       ])),
       EditorView.updateListener.of((update) => {
-        if (update.docChanged) {
-          preserveCurrentSource();
+        if (update.docChanged && !state.hydratingEditor && state.currentUser) {
+          setSaveHint('변경됨 · 곧 저장합니다.', 'dirty');
+          debouncedSaveCurrentSource();
         }
       }),
     ],
@@ -233,6 +296,8 @@ function setEditorContent(value) {
     createEditor(value);
     return;
   }
+
+  state.hydratingEditor = true;
   state.editor.dispatch({
     changes: {
       from: 0,
@@ -240,7 +305,19 @@ function setEditorContent(value) {
       insert: value,
     },
   });
+  state.hydratingEditor = false;
   configureEditor();
+}
+
+async function loadMemberSource(language = state.activeLanguage) {
+  if (!state.currentProblem || !state.currentUser) return;
+  setSaveHint('저장된 코드를 불러오는 중입니다...', 'loading');
+  const response = await window.fetchJson(
+    state.apiBaseUrl,
+    `/problems/${state.currentProblem.id}/code?language=${language}`
+  );
+  setEditorContent(response.sourceCode ?? response.starterCode ?? '');
+  setSaveHint(response.sourceCode ? '저장된 코드를 불러왔습니다.' : '저장된 코드가 없어 기본 코드를 불러왔습니다.', 'saved');
 }
 
 function renderProblem(problem) {
@@ -270,7 +347,7 @@ function renderProblem(problem) {
   }
 
   renderCases(problem);
-  setEditorContent(resolveSource(problem, state.activeLanguage));
+  applyEditorAccess();
   clearJudgeResult();
 }
 
@@ -323,19 +400,9 @@ function renderResult(data) {
   `).join('');
 }
 
-async function loadProblem() {
-  const problemId = getProblemIdFromUrl();
-  if (!problemId) {
-    window.location.href = './index.html';
-    return;
-  }
-  const response = await window.fetchJson(state.apiBaseUrl, `/problems/${problemId}`);
-  renderProblem(response.problem);
-}
-
 async function submitJudge() {
-  if (!state.currentProblem) return;
-  preserveCurrentSource();
+  if (!state.currentProblem || !state.currentUser) return;
+  await saveCurrentSource();
 
   setStatus('RUNNING', 'idle');
   elements.summary.innerHTML = '<p>코드를 컴파일하고 채점하고 있습니다...</p>';
@@ -350,6 +417,7 @@ async function submitJudge() {
       language: elements.languageSelect.value,
       sourceCode: getEditorValue(),
     }),
+    credentials: 'same-origin',
   });
   const body = await response.json();
   if (!response.ok || body.ok === false) {
@@ -358,11 +426,63 @@ async function submitJudge() {
   renderResult(body);
 }
 
-elements.languageSelect.addEventListener('change', () => {
-  preserveCurrentSource();
+async function applyEditorAccess() {
+  const isMember = Boolean(state.currentUser);
+  elements.guestGate.classList.toggle('hidden', isMember);
+  elements.memberEditorSection.classList.toggle('hidden', !isMember);
+  elements.languageSelect.disabled = !isMember;
+  elements.resetButton.disabled = !isMember;
+  elements.runButton.disabled = !isMember;
+
+  renderTopbarAuth();
+
+  if (!state.currentProblem) return;
+
+  if (!isMember) {
+    setSaveHint('로그인 후 저장된 풀이 코드를 불러올 수 있습니다.', 'idle');
+    if (!state.editor) {
+      setEditorContent(state.currentProblem.starterCodes[state.activeLanguage] || '');
+    }
+    return;
+  }
+
+  await loadMemberSource();
+}
+
+async function loadProblem() {
+  const problemId = getProblemIdFromUrl();
+  if (!problemId) {
+    window.location.href = './index.html';
+    return;
+  }
+  const response = await window.fetchJson(state.apiBaseUrl, `/problems/${problemId}`);
+  renderProblem(response.problem);
+}
+
+async function refreshCurrentUser() {
+  state.currentUser = await window.loadCurrentUser(state.apiBaseUrl);
+  renderTopbarAuth();
+}
+
+elements.languageSelect.addEventListener('change', async () => {
   if (!state.currentProblem) return;
   state.activeLanguage = elements.languageSelect.value;
-  setEditorContent(resolveSource(state.currentProblem, state.activeLanguage));
+  if (state.currentUser) {
+    await loadMemberSource(state.activeLanguage);
+  } else {
+    setEditorContent(state.currentProblem.starterCodes[state.activeLanguage] || '');
+  }
+});
+
+elements.resetButton.addEventListener('click', async () => {
+  if (!state.currentProblem || !state.currentUser) return;
+  const response = await window.fetchJson(
+    state.apiBaseUrl,
+    `/problems/${state.currentProblem.id}/code?language=${state.activeLanguage}`,
+    { method: 'DELETE' }
+  );
+  setEditorContent(response.starterCode || '');
+  setSaveHint('저장된 풀이 코드를 초기화하고 기본 코드로 되돌렸습니다.', 'saved');
 });
 
 elements.plainModeButton.addEventListener('click', () => {
@@ -389,4 +509,10 @@ elements.runButton.addEventListener('click', () => {
   triggerJudge();
 });
 
-loadProblem().catch((error) => clearJudgeResult(error.message));
+Promise.all([
+  refreshCurrentUser().catch(() => {
+    state.currentUser = null;
+    renderTopbarAuth();
+  }),
+  loadProblem(),
+]).catch((error) => clearJudgeResult(error.message));
