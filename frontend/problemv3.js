@@ -1,8 +1,9 @@
 import { EditorState, Compartment, Prec } from "https://esm.sh/@codemirror/state";
 import { EditorView, keymap } from "https://esm.sh/@codemirror/view";
 import { basicSetup } from "https://esm.sh/codemirror";
+import { indentMore, indentLess } from "https://esm.sh/@codemirror/commands";
 import { cpp } from "https://esm.sh/@codemirror/lang-cpp";
-import { StreamLanguage, HighlightStyle, syntaxHighlighting } from "https://esm.sh/@codemirror/language";
+import { StreamLanguage, HighlightStyle, syntaxHighlighting, indentUnit } from "https://esm.sh/@codemirror/language";
 import { swift } from "https://esm.sh/@codemirror/legacy-modes/mode/swift";
 import { tags } from "https://esm.sh/@lezer/highlight";
 
@@ -253,10 +254,18 @@ function createEditor(initialDoc) {
     extensions: [
       basicSetup,
       EditorView.lineWrapping,
+      EditorState.tabSize.of(4),
+      indentUnit.of("    "),
       languageCompartment.of(getLanguageExtension(state.activeLanguage)),
       themeCompartment.of(getThemeExtension()),
       highlightCompartment.of(getHighlightExtension()),
       Prec.highest(keymap.of([
+        {
+          key: "Tab",
+          preventDefault: true,
+          run: indentMore,
+          shift: indentLess,
+        },
         {
           key: "Mod-Enter",
           preventDefault: true,
