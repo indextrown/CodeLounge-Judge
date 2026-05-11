@@ -1,0 +1,22 @@
+{
+  "id": 2309,
+  "slug": "seven-dwarfs",
+  "title": "일곱 난쟁이",
+  "description": "아홉 개의 자연수가 주어졌을 때, 합이 100이 되는 일곱 난쟁이의 키를 오름차순으로 출력하세요.",
+  "timeLimit": "2 seconds",
+  "memoryLimit": "128 MB",
+  "starterCodes": {
+    "cpp": "#include <algorithm>\n#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n  ios::sync_with_stdio(false);\n  cin.tie(nullptr);\n\n  vector<int> heights(9);\n  for (int i = 0; i < 9; ++i) {\n    cin >> heights[i];\n  }\n\n  return 0;\n}\n",
+    "swift": "import Foundation\n\nvar heights: [Int] = []\nfor _ in 0..<9 {\n  if let line = readLine(), let value = Int(line) {\n    heights.append(value)\n  }\n}\n\n"
+  },
+  "testCases": [
+    {
+      "input": "20\n7\n23\n19\n10\n15\n25\n8\n13\n",
+      "output": "7\n8\n10\n13\n19\n20\n23\n"
+    },
+    {
+      "input": "1\n2\n3\n4\n5\n6\n79\n80\n90\n",
+      "output": "1\n2\n3\n4\n5\n6\n79\n"
+    }
+  ]
+}

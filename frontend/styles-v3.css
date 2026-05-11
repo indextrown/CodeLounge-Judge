@@ -1,0 +1,175 @@
+.v3-shell {
+  width: min(1600px, calc(100vw - 24px));
+}
+
+.v3-topbar {
+  grid-template-columns: auto 1fr;
+}
+
+.v3-hero {
+  grid-template-columns: minmax(0, 1fr) 280px;
+}
+
+.v3-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(420px, 0.85fr);
+  gap: 18px;
+  margin-top: 18px;
+  align-items: start;
+}
+
+.v3-main-column,
+.v3-editor-column {
+  display: grid;
+  gap: 18px;
+}
+
+.v3-editor-panel {
+  position: sticky;
+  top: 18px;
+}
+
+.v3-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.v3-toggle-group {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 14px;
+  background: #edf3fb;
+  border: 1px solid #d6e0eb;
+  gap: 4px;
+}
+
+.v3-toggle-button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #47617e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.v3-toggle-button.is-active {
+  background: #ffffff;
+  color: #1e4973;
+  box-shadow: 0 8px 20px rgba(55, 87, 128, 0.08);
+}
+
+.v3-editor-frame {
+  border: 1px solid #d1dde9;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fbfdff;
+}
+
+.v3-code-editor.is-dark {
+  background: #1f2630;
+}
+
+.v3-code-editor .cm-editor {
+  min-height: 520px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+}
+
+.v3-code-editor .cm-scroller {
+  min-height: 520px;
+}
+
+.v3-code-editor .cm-content,
+.v3-code-editor .cm-gutter {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.v3-code-editor .cm-focused {
+  outline: none;
+}
+
+.v3-code-editor .cm-activeLine,
+.v3-code-editor .cm-activeLineGutter {
+  background: rgba(76, 122, 176, 0.08);
+}
+
+.v3-code-editor.is-dark .cm-activeLine,
+.v3-code-editor.is-dark .cm-activeLineGutter {
+  background: #252f3a;
+}
+
+@media (min-width: 1281px) {
+  .v3-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 18px;
+  }
+
+  .v3-shell::after {
+    content: "";
+    display: block;
+    flex: none;
+    height: 56px;
+  }
+
+  .v3-shell .v2-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .v3-hero {
+    flex: none;
+  }
+
+  .v3-layout {
+    flex: 1;
+    min-height: 0;
+    align-items: start;
+  }
+
+  .v3-main-column,
+  .v3-editor-column {
+    min-height: 0;
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    padding-right: 6px;
+    padding-bottom: 40px;
+    scrollbar-gutter: stable;
+    align-self: start;
+  }
+
+  .v3-editor-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 1280px) {
+  .v3-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .v3-editor-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .v3-toolbar {
+    align-items: stretch;
+  }
+
+  .v3-code-editor .cm-editor,
+  .v3-code-editor .cm-scroller {
+    min-height: 420px;
+  }
+}

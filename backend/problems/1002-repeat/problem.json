@@ -1,0 +1,16 @@
+{
+  "id": 1002,
+  "slug": "repeat-text",
+  "title": "문자열 두 번 출력",
+  "description": "한 줄 문자열을 입력받아 같은 내용을 두 줄에 걸쳐 출력하세요.",
+  "timeLimit": "1 second",
+  "memoryLimit": "256 MB",
+  "starterCodes": {
+    "cpp": "#include <iostream>\n#include <string>\n\nusing namespace std;\n\nint main() {\n  ios::sync_with_stdio(false);\n  cin.tie(nullptr);\n\n  string line;\n  getline(cin, line);\n\n  return 0;\n}\n",
+    "swift": "import Foundation\n\nlet line = readLine() ?? \"\"\n\n"
+  },
+  "testCases": [
+    { "input": "apple\n", "output": "apple\napple\n" },
+    { "input": "swift judge\n", "output": "swift judge\nswift judge\n" }
+  ]
+}

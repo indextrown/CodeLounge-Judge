@@ -1,0 +1,17 @@
+{
+  "name": "swift-judge-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Local judge API for C++ and Swift submissions.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "check": "node --check src/app.js && node --check src/server.js && node --check src/problemStore.js && node --check src/processRunner.js && node --check src/judge.js",
+    "test": "npm run check && node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "UNLICENSED"
+}

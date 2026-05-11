@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>문제 풀이 V2 - 코드라운지</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles-v2.css">
+  </head>
+  <body class="v2-body">
+    <div class="v2-shell">
+      <header class="v2-topbar">
+        <a class="v2-brand" href="./index.html">
+          <span class="v2-brand-mark">C</span>
+          <span class="v2-brand-copy">
+            <strong>코드라운지</strong>
+            <small>Problem Detail V2</small>
+          </span>
+        </a>
+        <nav class="v2-nav">
+          <a href="./index.html">문제 목록</a>
+          <a href="./problemv1.html?id=1001">V1 보기</a>
+          <a class="is-active" href="#">상세 V2</a>
+        </nav>
+      </header>
+
+      <main class="v2-main">
+        <section class="v2-hero">
+          <div class="v2-hero-copy">
+            <nav class="breadcrumb v2-breadcrumb">
+              <a href="./index.html">문제 목록</a>
+              <span>/</span>
+              <span id="breadcrumbLabel">문제</span>
+            </nav>
+            <p class="section-kicker">Problem Detail V2</p>
+            <h1 id="problemTitle">문제를 불러오는 중...</h1>
+            <p id="problemDescription" class="v2-subcopy"></p>
+            <div class="v2-meta-row">
+              <span id="problemTime" class="v2-meta-pill"></span>
+              <span id="problemMemory" class="v2-meta-pill"></span>
+              <span id="caseCount" class="v2-meta-pill subtle"></span>
+            </div>
+          </div>
+          <aside class="v2-hero-side">
+            <div class="v2-status-stack">
+              <div class="v2-status-card">
+                <span class="eyebrow-small">현재 상태</span>
+                <span id="statusBadge" class="status-badge idle">READY</span>
+              </div>
+              <div class="v2-status-card">
+                <span class="eyebrow-small">화면 버전</span>
+                <strong>problemv2.html</strong>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="v2-content-grid">
+          <article class="v2-panel v2-statement-panel">
+            <div class="v2-panel-head">
+              <h2>문제 설명</h2>
+            </div>
+            <div id="statementVisualCard" class="v2-visual-card hidden">
+              <div class="v2-visual-glow"></div>
+              <div class="v2-visual-orbit orbit-a"></div>
+              <div class="v2-visual-orbit orbit-b"></div>
+              <img id="problemImage" class="v2-problem-image hidden" alt="문제 이미지">
+              <div class="v2-visual-core">
+                <span>C</span>
+              </div>
+            </div>
+            <p id="statementBody" class="v2-statement-text"></p>
+            <div class="v2-io-grid">
+              <section class="v2-mini-card">
+                <h3>입력</h3>
+                <p id="inputGuide">각 테스트케이스의 입력은 아래 예제 입력 카드에서 확인할 수 있습니다.</p>
+              </section>
+              <section class="v2-mini-card">
+                <h3>출력</h3>
+                <p id="outputGuide">각 테스트케이스의 기대 출력은 아래 예제 출력 카드에서 확인할 수 있습니다.</p>
+              </section>
+            </div>
+          </article>
+
+          <article class="v2-panel v2-cases-panel">
+            <div class="v2-panel-head">
+              <h2>테스트 케이스</h2>
+            </div>
+            <div id="casesList" class="v2-case-grid"></div>
+          </article>
+
+          <article class="v2-panel v2-submit-panel">
+            <div class="v2-panel-head">
+              <h2>코드 제출</h2>
+              <div class="workspace-actions">
+                <select id="languageSelect">
+                  <option value="cpp">C++</option>
+                  <option value="swift" selected>Swift</option>
+                </select>
+                <button id="runButton" class="v2-primary-button">채점하기</button>
+              </div>
+            </div>
+            <textarea id="sourceCode" class="v2-editor" spellcheck="false"></textarea>
+          </article>
+
+          <article class="v2-panel v2-result-panel">
+            <div class="v2-panel-head">
+              <h2>채점 결과</h2>
+            </div>
+            <div id="summary" class="summary-card"></div>
+            <div id="compileLog" class="log-card hidden"></div>
+            <div id="resultsList" class="v2-results-list"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="./shared.js"></script>
+    <script src="./problemv2.js"></script>
+  </body>
+  </html>

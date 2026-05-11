@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>문제 풀이 V1 - 코드라운지</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">C</span>
+          <span class="brand-text">
+            <strong>코드라운지</strong>
+            <small>Swift + C++ Online Judge</small>
+          </span>
+        </a>
+      </header>
+
+      <main class="view">
+        <div class="detail-header">
+          <div>
+            <nav class="breadcrumb">
+              <a href="./index.html">문제 목록</a>
+              <span>/</span>
+              <span id="breadcrumbLabel">문제</span>
+            </nav>
+            <p class="section-kicker">문제 풀이 V1</p>
+            <h1 id="problemTitle">문제를 불러오는 중...</h1>
+            <p id="problemDescription" class="detail-copy"></p>
+          </div>
+          <div class="detail-metadata">
+            <span id="problemTime" class="meta-pill"></span>
+            <span id="problemMemory" class="meta-pill"></span>
+          </div>
+        </div>
+
+        <div class="detail-layout">
+          <section class="problem-pane">
+            <article class="statement-card">
+              <div class="card-title-row">
+                <h2>문제 설명</h2>
+                <span id="caseCount" class="muted-note"></span>
+              </div>
+              <p id="statementBody" class="statement-body"></p>
+            </article>
+
+            <article class="statement-card">
+              <div class="card-title-row">
+                <h2>예제 / 채점 케이스</h2>
+              </div>
+              <div id="casesList" class="cases-list"></div>
+            </article>
+          </section>
+
+          <section class="workspace-pane">
+            <article class="workspace-card">
+              <div class="card-title-row">
+                <h2>제출 코드</h2>
+                <div class="workspace-actions">
+                  <select id="languageSelect">
+                    <option value="cpp">C++</option>
+                    <option value="swift" selected>Swift</option>
+                  </select>
+                  <button id="runButton" class="primary-button">채점하기</button>
+                </div>
+              </div>
+              <textarea id="sourceCode" spellcheck="false"></textarea>
+            </article>
+
+            <article class="workspace-card">
+              <div class="card-title-row">
+                <h2>채점 결과</h2>
+                <span id="statusBadge" class="status-badge idle">READY</span>
+              </div>
+              <div id="summary" class="summary-card"></div>
+              <div id="compileLog" class="log-card hidden"></div>
+              <div id="resultsList" class="results-list"></div>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="./shared.js"></script>
+    <script src="./problem.js"></script>
+  </body>
+  </html>
